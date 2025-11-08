@@ -3,62 +3,71 @@
 {{ $post_class := $.Site.Params.post_class }}
 
  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
+    (function() {
       const postClass = '{{ or $post_class "post-content" }}';
       const processedVideos = new Set(); // Prevent duplicates
 
-      // Select both post-content (detail pages) and e-content (homepage) elements
-      const postContents = document.querySelectorAll(`.${postClass}, .e-content`);
-      postContents.forEach(p => {
-          const links = [...p.getElementsByTagName('a')]
+      function initYouTubeEmbeds() {
+        // Select both post-content (detail pages) and e-content (homepage) elements
+        const postContents = document.querySelectorAll(`.${postClass}, .e-content`);
+        postContents.forEach(p => {
+            const links = [...p.getElementsByTagName('a')]
 
-          links.forEach(l => {
-              if (!l.href) return
+            links.forEach(l => {
+                if (!l.href) return
 
-              // Check if link is a YouTube URL
-              if (!(l.href.includes('youtube.com') || l.href.includes('youtu.be'))) return
+                // Check if link is a YouTube URL
+                if (!(l.href.includes('youtube.com') || l.href.includes('youtu.be'))) return
 
-              // https://gist.github.com/jphase/9086823
-              const matches = l.href.match(/(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/)
+                // https://gist.github.com/jphase/9086823
+                const matches = l.href.match(/(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/)
 
-              if (!matches || !matches[7]) return
+                if (!matches || !matches[7]) return
 
-              const ytId = matches[7]
+                const ytId = matches[7]
 
-              // Find the paragraph containing the link
-              const paragraph = l.closest('p')
-              if (!paragraph) return
+                // Find the paragraph containing the link
+                const paragraph = l.closest('p')
+                if (!paragraph) return
 
-              // Create unique key to prevent duplicate embeds
-              const videoKey = `${ytId}-${paragraph.textContent.substring(0, 50)}`;
+                // Create unique key to prevent duplicate embeds
+                const videoKey = `${ytId}-${paragraph.textContent.substring(0, 50)}`;
 
-              if (processedVideos.has(videoKey)) return
-              processedVideos.add(videoKey)
+                if (processedVideos.has(videoKey)) return
+                processedVideos.add(videoKey)
 
-              const video = document.createElement('lite-youtube')
-              video.setAttribute('videoid', ytId)
-              video.setAttribute('playlabel', l.innerText || 'Play Video')
+                const video = document.createElement('lite-youtube')
+                video.setAttribute('videoid', ytId)
+                video.setAttribute('playlabel', l.innerText || 'Play Video')
 
-              // Try to load HD thumbnail first, fallback to SD if not available
-              const hdThumb = `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`
-              const sdThumb = `https://i.ytimg.com/vi/${ytId}/sddefault.jpg`
+                // Try to load HD thumbnail first, fallback to SD if not available
+                const hdThumb = `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`
+                const sdThumb = `https://i.ytimg.com/vi/${ytId}/sddefault.jpg`
 
-              const img = new Image()
-              img.onload = function() {
-                // HD thumbnail exists
-                video.style.backgroundImage = `url('${hdThumb}')`
-              }
-              img.onerror = function() {
-                // HD thumbnail not available, use SD
-                video.style.backgroundImage = `url('${sdThumb}')`
-              }
-              img.src = hdThumb
+                const img = new Image()
+                img.onload = function() {
+                  // HD thumbnail exists
+                  video.style.backgroundImage = `url('${hdThumb}')`
+                }
+                img.onerror = function() {
+                  // HD thumbnail not available, use SD
+                  video.style.backgroundImage = `url('${sdThumb}')`
+                }
+                img.src = hdThumb
 
-              // Insert video right after the paragraph
-              paragraph.insertAdjacentElement('afterend', video)
+                // Insert video right after the paragraph
+                paragraph.insertAdjacentElement('afterend', video)
+            })
           })
-        })
-    })
+      }
+
+      // Run immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initYouTubeEmbeds);
+      } else {
+        initYouTubeEmbeds();
+      }
+    })();
 </script>
 
 <style>
