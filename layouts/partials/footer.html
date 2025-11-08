@@ -39,6 +39,21 @@
               video.setAttribute('videoid', ytId)
               video.setAttribute('playlabel', l.innerText || 'Play Video')
 
+              // Try to load HD thumbnail first, fallback to SD if not available
+              const hdThumb = `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`
+              const sdThumb = `https://i.ytimg.com/vi/${ytId}/sddefault.jpg`
+
+              const img = new Image()
+              img.onload = function() {
+                // HD thumbnail exists
+                video.style.backgroundImage = `url('${hdThumb}')`
+              }
+              img.onerror = function() {
+                // HD thumbnail not available, use SD
+                video.style.backgroundImage = `url('${sdThumb}')`
+              }
+              img.src = hdThumb
+
               // Insert video right after the paragraph
               paragraph.insertAdjacentElement('afterend', video)
           })
