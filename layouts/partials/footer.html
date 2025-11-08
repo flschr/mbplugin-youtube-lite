@@ -65,6 +65,15 @@
 
             // Insert video after paragraph
             paragraph.insertAdjacentElement('afterend', video);
+
+            // Debug: Check if background image was set after a short delay
+            setTimeout(() => {
+                const bgImage = window.getComputedStyle(video).backgroundImage;
+                if (!bgImage || bgImage === 'none') {
+                    console.warn('[YouTube Plugin] Background image not set for video:', videoData.videoId, 'Element:', video);
+                }
+            }, 100);
+
             return true;
         } catch (error) {
             console.error('Error creating video embed:', error);
@@ -76,6 +85,12 @@
      * Process YouTube links in content containers
      */
     function processYouTubeLinks() {
+        // Check if lite-youtube custom element is defined
+        if (typeof customElements === 'undefined' || !customElements.get('lite-youtube')) {
+            console.error('[YouTube Plugin] lite-youtube custom element is not defined. The lite-yt-embed.js script may have failed to load.');
+            return;
+        }
+
         const postClass = '{{ or $post_class "post-content" }}';
         const processedVideos = new Set();
 
@@ -139,6 +154,8 @@
         background-size: cover;
         cursor: pointer;
         max-width: 720px;
+        width: 100%;
+        min-width: 200px;
         margin-bottom: 10px;
     }
 
