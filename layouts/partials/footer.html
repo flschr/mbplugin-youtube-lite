@@ -1,12 +1,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.2.0/lite-yt-embed.js"></script>
 
 {{ $post_class := $.Site.Params.post_class }}
-{{ $post_append_class := $.Site.Params.post_append_class }}
 
  <script>
     document.addEventListener('DOMContentLoaded', (event) => {
       const postClass = '{{ or $post_class "post-content" }}';
-      const postAppendClass = '{{ or $post_append_class "post-content" }}';
       const processedVideos = new Set(); // Prevent duplicates
 
       [...document.getElementsByClassName(postClass)].forEach(p => {
@@ -24,12 +22,13 @@
               if (!matches || !matches[7]) return
 
               const ytId = matches[7]
-              const article = l.closest('.' + postAppendClass)
 
-              if (!article) return
+              // Find the paragraph containing the link
+              const paragraph = l.closest('p')
+              if (!paragraph) return
 
               // Create unique key to prevent duplicate embeds
-              const videoKey = article.id ? `${article.id}-${ytId}` : `${ytId}`;
+              const videoKey = `${ytId}-${paragraph.textContent.substring(0, 50)}`;
 
               if (processedVideos.has(videoKey)) return
               processedVideos.add(videoKey)
@@ -37,7 +36,9 @@
               const video = document.createElement('lite-youtube')
               video.setAttribute('videoid', ytId)
               video.setAttribute('playlabel', l.innerText || 'Play Video')
-              article.appendChild(video)
+
+              // Insert video right after the paragraph
+              paragraph.insertAdjacentElement('afterend', video)
           })
         })
     })
