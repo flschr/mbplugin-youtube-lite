@@ -14,12 +14,6 @@ class LiteYTEmbed extends HTMLElement {
     connectedCallback() {
         this.videoId = this.getAttribute('videoid');
 
-        // Ensure videoId is valid before proceeding
-        if (!this.videoId) {
-            console.error('[LiteYTEmbed] No videoId found. Element:', this);
-            return;
-        }
-
         let playBtnEl = this.querySelector('.lyt-playbtn,.lty-playbtn');
         // A label for the button takes priority over a [playlabel] attribute on the custom-element
         this.playLabel = (playBtnEl && playBtnEl.textContent.trim()) || this.getAttribute('playlabel') || 'Play';
@@ -31,8 +25,7 @@ class LiteYTEmbed extends HTMLElement {
          *
          * See https://github.com/paulirish/lite-youtube-embed/blob/master/youtube-thumbnail-urls.md
          */
-        const currentBgImage = this.style.backgroundImage || '';
-        if (!currentBgImage || currentBgImage === '' || currentBgImage === 'none') {
+        if (!this.style.backgroundImage) {
           this.style.backgroundImage = `url("https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg")`;
           this.upgradePosterImage();
         }
@@ -81,9 +74,7 @@ class LiteYTEmbed extends HTMLElement {
         // However Safari desktop and most/all mobile browsers do not successfully track the user gesture of clicking through the creation/loading of the iframe,
         // so they don't autoplay automatically. Instead we must load an additional 2 sequential JS files (1KB + 165KB) (un-br) for the YT Player API
         // TODO: Try loading the the YT API in parallel with our iframe and then attaching/playing it. #82
-        const vendor = typeof navigator !== 'undefined' && typeof navigator.vendor === 'string' ? navigator.vendor : '';
-        const userAgent = typeof navigator !== 'undefined' && typeof navigator.userAgent === 'string' ? navigator.userAgent : '';
-        this.needsYTApi = this.hasAttribute("js-api") || vendor.includes('Apple') || userAgent.includes('Mobi');
+        this.needsYTApi = this.hasAttribute("js-api") || navigator.vendor.includes('Apple') || navigator.userAgent.includes('Mobi');
     }
 
     /**
@@ -245,8 +236,4 @@ class LiteYTEmbed extends HTMLElement {
     }
 }
 // Register custom element
-if (typeof customElements !== 'undefined') {
-    customElements.define('lite-youtube', LiteYTEmbed);
-} else {
-    console.error('[LiteYTEmbed] customElements is not supported in this browser');
-}
+customElements.define('lite-youtube', LiteYTEmbed);
