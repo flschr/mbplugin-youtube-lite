@@ -3,6 +3,7 @@
   "title": "Lite YouTube for Micro.blog",
   "description": "Appends YouTube embeds with lite-youtube to any post which contains a YouTube link",
   "includes": [
+  	"head.html",
   	"footer.html"
   ],
   "fields": [
