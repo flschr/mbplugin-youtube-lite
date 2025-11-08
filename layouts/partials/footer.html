@@ -1,49 +1,132 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.2.0/lite-yt-embed.js"></script>
+<script src="/plugin/mbplugin-youtube-lite/js/lite-yt-embed.js"></script>
 
 {{ $post_class := $.Site.Params.post_class }}
 
- <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const postClass = '{{ or $post_class "post-content" }}';
-      const processedVideos = new Set(); // Prevent duplicates
+<script>
+(function() {
+    'use strict';
 
-      // Select both post-content (detail pages) and e-content (homepage) elements
-      const postContents = document.querySelectorAll(`.${postClass}, .e-content`);
-      postContents.forEach(p => {
-          const links = [...p.getElementsByTagName('a')]
+    // Compile regex patterns once for better performance
+    const YOUTUBE_REGEX = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&]([^#\s]*))?/;
+    const TIMESTAMP_REGEX = /[?&]t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?/;
+    const PLAYLIST_REGEX = /[?&]list=([a-zA-Z0-9_-]+)/;
 
-          links.forEach(l => {
-              if (!l.href) return
+    /**
+     * Extract video ID and parameters from YouTube URL
+     * Supports: regular videos, shorts, live streams, playlists, timestamps
+     */
+    function parseYouTubeUrl(url) {
+        try {
+            const match = url.match(YOUTUBE_REGEX);
+            if (!match || !match[1]) return null;
 
-              // Check if link is a YouTube URL
-              if (!(l.href.includes('youtube.com') || l.href.includes('youtu.be'))) return
+            const videoId = match[1];
+            const params = {};
 
-              // https://gist.github.com/jphase/9086823
-              const matches = l.href.match(/(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/)
+            // Extract timestamp (e.g., ?t=1m30s or &t=90)
+            const timeMatch = url.match(TIMESTAMP_REGEX);
+            if (timeMatch) {
+                const hours = parseInt(timeMatch[1]) || 0;
+                const minutes = parseInt(timeMatch[2]) || 0;
+                const seconds = parseInt(timeMatch[3]) || 0;
+                const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                if (totalSeconds > 0) {
+                    params.start = totalSeconds;
+                }
+            }
 
-              if (!matches || !matches[7]) return
+            // Preserve playlist parameter
+            const playlistMatch = url.match(PLAYLIST_REGEX);
+            if (playlistMatch) {
+                params.list = playlistMatch[1];
+            }
 
-              const ytId = matches[7]
+            return { videoId, params };
+        } catch (error) {
+            console.error('Error parsing YouTube URL:', url, error);
+            return null;
+        }
+    }
 
-              // Find the paragraph containing the link
-              const paragraph = l.closest('p')
-              if (!paragraph) return
+    /**
+     * Create and insert lite-youtube element
+     */
+    function createVideoEmbed(videoData, linkElement, paragraph) {
+        try {
+            const video = document.createElement('lite-youtube');
+            video.setAttribute('videoid', videoData.videoId);
+            video.setAttribute('playlabel', linkElement.innerText?.trim() || 'Play Video');
 
-              // Create unique key to prevent duplicate embeds
-              const videoKey = `${ytId}-${paragraph.textContent.substring(0, 50)}`;
+            // Add parameters if any exist
+            if (Object.keys(videoData.params).length > 0) {
+                const paramString = new URLSearchParams(videoData.params).toString();
+                video.setAttribute('params', paramString);
+            }
 
-              if (processedVideos.has(videoKey)) return
-              processedVideos.add(videoKey)
+            // Insert video after paragraph
+            paragraph.insertAdjacentElement('afterend', video);
+            return true;
+        } catch (error) {
+            console.error('Error creating video embed:', error);
+            return false;
+        }
+    }
 
-              const video = document.createElement('lite-youtube')
-              video.setAttribute('videoid', ytId)
-              video.setAttribute('playlabel', l.innerText || 'Play Video')
+    /**
+     * Process YouTube links in content containers
+     */
+    function processYouTubeLinks() {
+        const postClass = '{{ or $post_class "post-content" }}';
+        const processedVideos = new Set();
 
-              // Insert video right after the paragraph
-              paragraph.insertAdjacentElement('afterend', video)
-          })
-        })
-    })
+        // Select content containers
+        const containers = document.querySelectorAll(`.${postClass}, .e-content`);
+
+        containers.forEach(container => {
+            // Use getElementsByTagName for better performance (live HTMLCollection)
+            const links = container.getElementsByTagName('a');
+
+            // Convert to array only once for iteration
+            Array.from(links).forEach(link => {
+                // Validate link
+                if (!link.href || typeof link.href !== 'string') return;
+
+                // Quick check before regex
+                const href = link.href;
+                if (!href.includes('youtube.com') && !href.includes('youtu.be')) return;
+
+                // Parse URL
+                const videoData = parseYouTubeUrl(href);
+                if (!videoData) return;
+
+                // Find containing paragraph
+                const paragraph = link.closest('p');
+                if (!paragraph) return;
+
+                // Generate unique key to prevent duplicates
+                // Use a combination of videoId, container, and link position
+                const containerIndex = Array.from(containers).indexOf(container);
+                const linkIndex = Array.from(links).indexOf(link);
+                const videoKey = `${videoData.videoId}-${containerIndex}-${linkIndex}`;
+
+                // Skip if already processed
+                if (processedVideos.has(videoKey)) return;
+                processedVideos.add(videoKey);
+
+                // Create embed
+                createVideoEmbed(videoData, link, paragraph);
+            });
+        });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', processYouTubeLinks);
+    } else {
+        // DOM already loaded
+        processYouTubeLinks();
+    }
+})();
 </script>
 
 <style>
