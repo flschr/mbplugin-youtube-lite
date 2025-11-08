@@ -24,8 +24,8 @@ This plugin appends a [lite-youtube](https://github.com/paulirish/lite-youtube-e
 2. Set the class name on the element for the posts on your blog
 3. Click _Update Settings_
 
-If your theme already includes the code below in the `head.html` file then everything should just work. If not, you can include the partial manually by adding the following to your `head.html` file under `Design > Edit Custom Themes > Your Theme`:
+The plugin automatically includes the necessary styles and scripts via these partials:
+- `lite-youtube-styles.html` (included in `<head>`)
+- `lite-youtube-embed.html` (included before `</body>`)
 
-```
-{{ partial "lite-youtube.html" . }}
-```
+These unique names ensure the plugin won't conflict with or override your theme's own `head.html` or `footer.html` partials.
