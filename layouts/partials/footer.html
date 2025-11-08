@@ -7,7 +7,9 @@
       const postClass = '{{ or $post_class "post-content" }}';
       const processedVideos = new Set(); // Prevent duplicates
 
-      [...document.getElementsByClassName(postClass)].forEach(p => {
+      // Select both post-content (detail pages) and e-content (homepage) elements
+      const postContents = document.querySelectorAll(`.${postClass}, .e-content`);
+      postContents.forEach(p => {
           const links = [...p.getElementsByTagName('a')]
 
           links.forEach(l => {
