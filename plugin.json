@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "title": "Lite YouTube for Micro.blog",
   "description": "Appends YouTube embeds with lite-youtube to any post which contains a YouTube link",
   "includes": [
@@ -10,11 +10,6 @@
 		"field": "params.post_class",
 		"label": "Post class",
 		"placeholder": "Enter the class name of your post container"
-	},
-	{
-		"field": "params.post_append_class",
-		"label": "Post append class",
-		"placeholder": "Enter the class name of the element to append videos to"
 	}
   ]
 }
