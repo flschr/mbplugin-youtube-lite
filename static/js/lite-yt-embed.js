@@ -14,6 +14,12 @@ class LiteYTEmbed extends HTMLElement {
     connectedCallback() {
         this.videoId = this.getAttribute('videoid');
 
+        // Ensure videoId is valid before proceeding
+        if (!this.videoId) {
+            console.error('[LiteYTEmbed] No videoId found. Element:', this);
+            return;
+        }
+
         let playBtnEl = this.querySelector('.lyt-playbtn,.lty-playbtn');
         // A label for the button takes priority over a [playlabel] attribute on the custom-element
         this.playLabel = (playBtnEl && playBtnEl.textContent.trim()) || this.getAttribute('playlabel') || 'Play';
@@ -25,7 +31,8 @@ class LiteYTEmbed extends HTMLElement {
          *
          * See https://github.com/paulirish/lite-youtube-embed/blob/master/youtube-thumbnail-urls.md
          */
-        if (!this.style.backgroundImage) {
+        const currentBgImage = this.style.backgroundImage || '';
+        if (!currentBgImage || currentBgImage === '' || currentBgImage === 'none') {
           this.style.backgroundImage = `url("https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg")`;
           this.upgradePosterImage();
         }
@@ -238,4 +245,8 @@ class LiteYTEmbed extends HTMLElement {
     }
 }
 // Register custom element
-customElements.define('lite-youtube', LiteYTEmbed);
+if (typeof customElements !== 'undefined') {
+    customElements.define('lite-youtube', LiteYTEmbed);
+} else {
+    console.error('[LiteYTEmbed] customElements is not supported in this browser');
+}
