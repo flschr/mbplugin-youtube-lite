@@ -5,11 +5,11 @@
 
  <script>
     document.addEventListener('DOMContentLoaded', (event) => {
-      const postClass = {{ or $post_class "post-content" }};
-      const postAppendClass = {{ or $post_append_class "post-content" }};
+      const postClass = '{{ or $post_class "post-content" }}';
+      const postAppendClass = '{{ or $post_append_class "post-content" }}';
       const processedVideos = new Set(); // Prevent duplicates
 
-      const posts = [...document.getElementsByClassName(postClass)].forEach(p => {
+      [...document.getElementsByClassName(postClass)].forEach(p => {
           const links = [...p.getElementsByTagName('a')]
 
           links.forEach(l => {
