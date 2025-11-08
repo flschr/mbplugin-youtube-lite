@@ -1,10 +1,10 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "title": "Lite YouTube for Micro.blog",
   "description": "Appends YouTube embeds with lite-youtube to any post which contains a YouTube link",
   "includes": [
-  	"head.html",
-  	"footer.html"
+  	"microhook-head.html",
+  	"microhook-footer.html"
   ],
   "fields": [
     {
