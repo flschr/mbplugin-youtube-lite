@@ -1,10 +1,8 @@
 <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js"
-    integrity="sha384-l0bJRb8uaU+rvS4EOYieZWwStJfr4whqa+MdwH2IErv5h21u0vkcOJU0Pmh8rnX/"
-    crossorigin="anonymous"
+    src="{{ "js/lite-yt-embed.js" | relURL }}"
     defer
     onload="console.log('lite-youtube script loaded successfully')"
-    onerror="console.error('Failed to load lite-youtube script from CDN')">
+    onerror="console.error('Failed to load lite-youtube script')">
 </script>
 
 {{ $post_class := $.Site.Params.post_class }}
