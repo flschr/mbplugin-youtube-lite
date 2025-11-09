@@ -39,13 +39,6 @@ adds several quality-of-life improvements:
 - Extensive runtime logging makes it easier to troubleshoot unexpected URLs
   without breaking page rendering.
 
-## Installation
-
-1. Find [Lite YouTube for Micro.blog](https://micro.blog/account/plugins/view/83)
-   in the plug-in directory.
-2. Install it on the desired site and click **Install**.
-3. Ta-da! The plug-in is ready to use.
-
 ### Configuration
 
 1. Go to **Plug-ins** and click **Settings** next to **Lite YouTube for Micro.blog**.
@@ -60,12 +53,3 @@ partials:
   component.
 - `lite-youtube-footer.html` (included before `</body>`) – JavaScript for link
   detection and embed injection.
-
-These unique names ensure the plug-in will not conflict with or override your
-theme's own `head.html` or `footer.html` partials.
-
-## A note of thanks
-
-Huge thanks to [Paul Irish](https://github.com/paulirish) for the Lite YouTube
-Embed component and to the original Micro.blog plug-in author for laying the
-foundation that made this lightweight fork possible.
