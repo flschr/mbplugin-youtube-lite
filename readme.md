@@ -34,6 +34,16 @@ For advanced usage, you can also use the individual partials:
 
 These unique names ensure the plugin won't conflict with or override your theme's own `head.html` or `footer.html` partials.
 
+### Styling processed links
+
+Während der Verarbeitung markiert das Skript jeden gefundenen YouTube-Link mit der Klasse `lite-youtube-link--processed`. Falls du den ursprünglichen Link in der HTML-Ausgabe ausblenden möchtest, kannst du beispielsweise folgendes CSS in dein Theme aufnehmen:
+
+```css
+.lite-youtube-link--processed {
+    display: none;
+}
+```
+
 ### Feed output and customization
 
 YouTube-Links werden in Feeds und anderen nicht-HTML-Ausgaben automatisch entschärft. Statt eines eingebetteten Videos erscheint dort der Hinweis „Eingebettetes YouTube-Video, klicken um das Video zu öffnen: URL“ mit der originalen Webadresse als Klartext.
