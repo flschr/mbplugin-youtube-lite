@@ -25,7 +25,11 @@ This plugin appends a [lite-youtube](https://github.com/paulirish/lite-youtube-e
 3. Click _Update Settings_
 
 The plugin automatically includes the necessary styles and scripts via these partials:
-- `lite-youtube-styles.html` (included in `<head>`)
-- `lite-youtube-embed.html` (included before `</body>`)
+- `lite-youtube-head.html` (included in `<head>`) - Contains CSS styles
+- `lite-youtube-footer.html` (included before `</body>`) - Contains JavaScript
+
+For advanced usage, you can also use the individual partials:
+- `lite-youtube-styles.html` - Just the CSS styles
+- `lite-youtube-embed.html` - Just the JavaScript
 
 These unique names ensure the plugin won't conflict with or override your theme's own `head.html` or `footer.html` partials.
