@@ -1,0 +1,14 @@
+{{- $destination := .Destination -}}
+{{- $isYouTube := gt (len (findRE `^https?://(www\.)?(youtube\.com|youtu\.be)/` $destination)) 0 -}}
+{{- $isHTML := eq .Page.OutputFormat.Name "HTML" -}}
+{{- if and $isYouTube $isHTML -}}
+<a href="{{ $destination | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ range $k, $v := .Attributes }} {{ $k }}="{{ $v }}"{{ end }}{{ if not (and .Attributes (isset .Attributes "data-lite-youtube-link")) }} data-lite-youtube-link="true"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- else if $isYouTube -}}
+<p>Eingebettetes YouTube-Video, klicken um das Video zu öffnen: {{ $destination }}</p>
+{{- else -}}
+{{- if $isHTML -}}
+<a href="{{ $destination | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ range $k, $v := .Attributes }} {{ $k }}="{{ $v }}"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- else -}}
+{{ .Text }} ({{ $destination }})
+{{- end -}}
+{{- end -}}

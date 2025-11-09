@@ -33,3 +33,10 @@ For advanced usage, you can also use the individual partials:
 - `lite-youtube-embed.html` - Just the JavaScript
 
 These unique names ensure the plugin won't conflict with or override your theme's own `head.html` or `footer.html` partials.
+
+### Feed output and customization
+
+YouTube-Links werden in Feeds und anderen nicht-HTML-Ausgaben automatisch entschärft. Statt eines eingebetteten Videos erscheint dort der Hinweis „Eingebettetes YouTube-Video, klicken um das Video zu öffnen: URL“ mit der originalen Webadresse als Klartext.
+
+Wenn du den Hinweistext anpassen möchtest, bearbeite die Datei `layouts/_default/_markup/render-link.html`. Dort kannst du den ausgebenen Absatz oder einzelne Formulierungen nach Bedarf anpassen.
+
