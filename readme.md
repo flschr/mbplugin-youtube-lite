@@ -1,53 +1,33 @@
 # YouTube-Lite for Micro.blog
 
-Lite YouTube for Micro.blog replaces YouTube links included in your posts with Paul Irish's [Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so your posts can load quickly while still letting visitors play videos on demand. This Micro.blog plugin is forked from [rknightuk/micro-blog-lite-youtube](https://github.com/rknightuk/micro-blog-lite-youtube), many thanks to Robb Knight for the groundwork.
+Lite YouTube for Micro.blog replaces YouTube links in your posts with Paul Irish's [Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so pages stay fast while visitors can still play videos on demand. The plug-in is a fork of [rknightuk/micro-blog-lite-youtube](https://github.com/rknightuk/micro-blog-lite-youtube) and builds on Robb Knight's original work.
 
-Whenever a post contains a YouTube link (or several links), the plug-in inserts a lightweight video player embed immediately after the paragraph that contains each link on your blog. This replacement does not happen inside RRS readers, so .... and also not with Mastodon or Bluesky. So unlike other plugins (https://github.com/flschr/mbplugin-youtube-nocookie) the appearance is not changed for RSS or mastodon, Bluesky where the link remains valid and not embedd code is seen. When a plain text link is posted, Mastodon and Bluesky even can render YouTube video thumbnail previews.
+Whenever a post contains a YouTube link, the plug-in injects a lightweight player right after the paragraph that mentions it on your blog. RSS readers, Mastodon, and Bluesky continue to show the plain link so their previews work as usual.
 
-## Key features
+## Highlights
 
-- Automatically enhances both individual post pages and timeline/home page
-  excerpts (elements with the configured post class and the default `.e-content`).
-- Supports classic watch links, shortened `youtu.be` URLs, embedded URLs, and
-  YouTube Shorts.
-- Preserves share links that start at a specific timestamp by translating
-  supported `start`, `t`, and `time_continue` query or fragment parameters into
-  Lite YouTube player parameters.
-- Adds polite error handling and duplicate detection so the same video is not
-  embedded twice when a paragraph contains repeated links.
-- Loads the `lite-youtube` web component from the plug-in bundle and waits for it
-  to be ready before generating embeds, with a timed fallback for older
-  browsers.
+- Enhances individual posts and timeline excerpts (default `.e-content`, or your configured post class).
+- Understands classic watch URLs, `youtu.be` short links, embedded URLs, and YouTube Shorts.
+- Preserves start times from `start`, `t`, and `time_continue` parameters.
+- Avoids duplicate embeds and adds friendly error handling.
+- Loads the bundled `lite-youtube` web component with fallbacks for older browsers.
 
-## What is different from the original plug-in?
+## Differences from the original plug-in
 
-This Micro.blog plug-in started as a fork of the directory's original "Lite
-YouTube for Micro.blog" project. The fork keeps the same visual appearance but
-adds several quality-of-life improvements:
+This fork keeps the same appearance as the directory's "Lite YouTube for Micro.blog" project and adds:
 
-- JavaScript has been rewritten to detect and transform more YouTube URL
-  formats, including Shorts and embedded URLs, instead of only classic
-  `watch?v=` links.
-- Start times from share URLs are now honored so videos begin playing where the
-  author intended.
-- Embeds are injected right after the paragraph that contains each link (even on
-  the Micro.blog home page) instead of being appended at the end of the post.
-- The Lite YouTube web component is bundled locally for resilience and loaded
-  with graceful fallbacks.
-- Extensive runtime logging makes it easier to troubleshoot unexpected URLs
-  without breaking page rendering.
+- Broader URL detection, including Shorts and embed links.
+- Respect for shared start times so playback begins where intended.
+- Inline embeds directly after each matching paragraph, including on the home page.
+- Locally bundled assets and detailed runtime logging for easier troubleshooting.
 
 ### Configuration
 
 1. Go to **Plug-ins** and click **Settings** next to **Lite YouTube for Micro.blog**.
-2. Set the class name that wraps the post content on your theme (the default is
-   `post-content`).
+2. Set the class name that wraps your post content (default: `post-content`).
 3. Click **Update Settings**.
 
-The plug-in automatically includes the necessary styles and scripts via these
-partials:
+The plug-in automatically loads two partials:
 
-- `lite-youtube-head.html` (included in `<head>`) – CSS styles for the
-  component.
-- `lite-youtube-footer.html` (included before `</body>`) – JavaScript for link
-  detection and embed injection.
+- `lite-youtube-head.html` – CSS for the component (included in `<head>`).
+- `lite-youtube-footer.html` – JavaScript for link detection and embed injection (included before `</body>`).
