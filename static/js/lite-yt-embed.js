@@ -24,8 +24,6 @@
         addPrefetch('preconnect', 'https://www.google.com');
         addPrefetch('preconnect', 'https://i.ytimg.com', 'image');
         addPrefetch('preconnect', 'https://s.ytimg.com');
-        addPrefetch('preconnect', 'https://googleads.g.doubleclick.net');
-        addPrefetch('preconnect', 'https://static.doubleclick.net');
     }
 
     class LiteYTEmbed extends HTMLElement {

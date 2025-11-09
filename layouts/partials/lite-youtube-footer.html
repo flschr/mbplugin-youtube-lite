@@ -1,7 +1,6 @@
 <script
     src="{{ "js/lite-yt-embed.js" | relURL }}"
     defer
-    onload="console.log('lite-youtube script loaded successfully')"
     onerror="console.error('Failed to load lite-youtube script')">
 </script>
 
@@ -49,22 +48,22 @@
     }
 
     function processYouTubeLinks() {
-        console.log('processYouTubeLinks called');
         const postClass = '{{ or $post_class "post-content" }}';
         const processedVideos = new Set();
 
         // Select both post-content (detail pages) and e-content (homepage) elements
         const postContents = document.querySelectorAll(`.${postClass}, .e-content`);
-        console.log(`Found ${postContents.length} post containers`);
-
-        let videosCreated = 0;
 
         postContents.forEach(container => {
             const links = [...container.getElementsByTagName('a')];
-            console.log(`Found ${links.length} links in container`);
 
             links.forEach(link => {
                 if (!link.href) return;
+
+                const host = (link.hostname || '').toLowerCase();
+                if (!host || !YOUTUBE_HOST_PATTERN.test(host)) {
+                    return;
+                }
 
                 let url;
                 try {
@@ -79,9 +78,6 @@
                     return;
                 }
 
-                console.log(`Found YouTube link: ${link.href}`);
-                console.log(`Extracted video ID: ${ytId}`);
-
                 // Find the paragraph containing the link
                 const paragraph = link.closest('p');
                 if (!paragraph) {
@@ -93,7 +89,6 @@
                 const videoKey = `${ytId}-${paragraph.textContent.substring(0, 50)}`;
 
                 if (processedVideos.has(videoKey)) {
-                    console.log(`Video ${ytId} already processed, skipping`);
                     return;
                 }
                 processedVideos.add(videoKey);
@@ -103,34 +98,24 @@
                 video.setAttribute('videoid', ytId);
                 video.setAttribute('playlabel', link.innerText || 'Play Video');
 
-                console.log(`Creating lite-youtube element for video ${ytId}`);
-
                 // Insert video right after the paragraph
                 paragraph.insertAdjacentElement('afterend', video);
-                videosCreated++;
             });
         });
-
-        console.log(`Created ${videosCreated} lite-youtube elements`);
     }
 
     function initLiteYouTube() {
-        console.log('initLiteYouTube called');
-
         // Check if customElements is available (lite-youtube needs it)
         if (typeof customElements === 'undefined') {
             console.warn('Custom elements not supported - lite-youtube will not work');
             return;
         }
 
-        console.log('Custom elements supported, waiting for lite-youtube definition...');
-
         // Set a timeout fallback in case the element never gets defined
         let processed = false;
 
         // Wait for the lite-youtube custom element to be defined before creating elements
         customElements.whenDefined('lite-youtube').then(() => {
-            console.log('lite-youtube element defined, processing links');
             if (!processed) {
                 processed = true;
                 processYouTubeLinks();
@@ -151,11 +136,9 @@
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        console.log('DOM loading, adding event listener');
         document.addEventListener('DOMContentLoaded', initLiteYouTube);
     } else {
         // DOM already loaded (e.g., when script is deferred)
-        console.log('DOM already loaded, initializing immediately');
         initLiteYouTube();
     }
 </script>
