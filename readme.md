@@ -1,12 +1,8 @@
 # YouTube-Lite for Micro.blog
 
-Lite YouTube for Micro.blog replaces standard YouTube iframes with Paul Irish's
-[Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so
-your posts can load quickly while still letting visitors play videos on demand.
-It is proudly forked from [rknightuk/micro-blog-lite-youtube](https://github.com/rknightuk/micro-blog-lite-youtube);
-many thanks to the original author for the inspiration and groundwork.
-Whenever a post contains a YouTube link (or several links), the plug-in inserts
-a lightweight embed immediately after the paragraph that contains each link.
+Lite YouTube for Micro.blog replaces YouTube links included in your posts with Paul Irish's [Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so your posts can load quickly while still letting visitors play videos on demand. This Micro.blog plugin is forked from [rknightuk/micro-blog-lite-youtube](https://github.com/rknightuk/micro-blog-lite-youtube), many thanks to Robb Knight for the groundwork.
+
+Whenever a post contains a YouTube link (or several links), the plug-in inserts a lightweight video player embed immediately after the paragraph that contains each link on your blog. This replacement does not happen inside RRS readers, so .... and also not with Mastodon or Bluesky. So unlike other plugins (https://github.com/flschr/mbplugin-youtube-nocookie) the appearance is not changed for RSS or mastodon, Bluesky where the link remains valid and not embedd code is seen. When a plain text link is posted, Mastodon and Bluesky even can render YouTube video thumbnail previews.
 
 ## Key features
 
