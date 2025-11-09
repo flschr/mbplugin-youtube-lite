@@ -32,8 +32,12 @@
                 // Check if link is a YouTube URL
                 if (!(link.href.includes('youtube.com') || link.href.includes('youtu.be'))) return;
 
+                if (link.classList.contains('lite-youtube-link--processed')) {
+                    console.log('Link already processed, skipping');
+                    return;
+                }
+
                 console.log(`Found YouTube link: ${link.href}`);
-                link.classList.add('lite-youtube-link--processed');
 
                 // Extract YouTube video ID
                 // https://gist.github.com/jphase/9086823
@@ -72,6 +76,7 @@
 
                 // Insert video right after the paragraph
                 paragraph.insertAdjacentElement('afterend', video);
+                link.classList.add('lite-youtube-link--processed');
                 videosCreated++;
             });
         });
