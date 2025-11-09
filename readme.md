@@ -1,35 +1,71 @@
-## Lite YouTube for Micro.blog
+# Lite YouTube for Micro.blog
 
-This plugin appends a [lite-youtube](https://github.com/paulirish/lite-youtube-embed) embed at the end of any post that includes a YouTube link (it also works with multiple links in one post).
+Lite YouTube for Micro.blog replaces standard YouTube iframes with Paul Irish's
+[Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so
+your posts can load quickly while still letting visitors play videos on demand.
+Whenever a post contains a YouTube link (or several links), the plug-in inserts
+a lightweight embed immediately after the paragraph that contains each link.
 
-### Example
+## Key features
 
-**Before**:
+- Automatically enhances both individual post pages and timeline/home page
+  excerpts (elements with the configured post class and the default `.e-content`).
+- Supports classic watch links, shortened `youtu.be` URLs, embedded URLs, and
+  YouTube Shorts.
+- Preserves share links that start at a specific timestamp by translating
+  supported `start`, `t`, and `time_continue` query or fragment parameters into
+  Lite YouTube player parameters.
+- Adds polite error handling and duplicate detection so the same video is not
+  embedded twice when a paragraph contains repeated links.
+- Loads the `lite-youtube` web component from the plug-in bundle and waits for it
+  to be ready before generating embeds, with a timed fallback for older
+  browsers.
 
-![before](before.png)
+## What is different from the original plug-in?
 
-**After**:
+This Micro.blog plug-in started as a fork of the directory's original "Lite
+YouTube for Micro.blog" project. The fork keeps the same visual appearance but
+adds several quality-of-life improvements:
 
-![after](after.png)
+- JavaScript has been rewritten to detect and transform more YouTube URL
+  formats, including Shorts and embedded URLs, instead of only classic
+  `watch?v=` links.
+- Start times from share URLs are now honored so videos begin playing where the
+  author intended.
+- Embeds are injected right after the paragraph that contains each link (even on
+  the Micro.blog home page) instead of being appended at the end of the post.
+- The Lite YouTube web component is bundled locally for resilience and loaded
+  with graceful fallbacks.
+- Extensive runtime logging makes it easier to troubleshoot unexpected URLs
+  without breaking page rendering.
 
 ## Installation
 
-1. Find [Lite YouTube for Micro.blog](https://micro.blog/account/plugins/view/83) in the plug-in directory
-2. Install to the site you want to install to and press install
-3. Ta-da! It's installed
+1. Find [Lite YouTube for Micro.blog](https://micro.blog/account/plugins/view/83)
+   in the plug-in directory.
+2. Install it on the desired site and click **Install**.
+3. Ta-da! The plug-in is ready to use.
 
 ### Configuration
 
-1. Go to _plug-ins_ and pressing settings next to _Lite YouTube for Micro.blog_
-2. Set the class name on the element for the posts on your blog
-3. Click _Update Settings_
+1. Go to **Plug-ins** and click **Settings** next to **Lite YouTube for Micro.blog**.
+2. Set the class name that wraps the post content on your theme (the default is
+   `post-content`).
+3. Click **Update Settings**.
 
-The plugin automatically includes the necessary styles and scripts via these partials:
-- `lite-youtube-head.html` (included in `<head>`) - Contains CSS styles
-- `lite-youtube-footer.html` (included before `</body>`) - Contains JavaScript
+The plug-in automatically includes the necessary styles and scripts via these
+partials:
 
-For advanced usage, you can also use the individual partials:
-- `lite-youtube-styles.html` - Just the CSS styles
-- `lite-youtube-embed.html` - Just the JavaScript
+- `lite-youtube-head.html` (included in `<head>`) – CSS styles for the
+  component.
+- `lite-youtube-footer.html` (included before `</body>`) – JavaScript for link
+  detection and embed injection.
 
-These unique names ensure the plugin won't conflict with or override your theme's own `head.html` or `footer.html` partials.
+These unique names ensure the plug-in will not conflict with or override your
+theme's own `head.html` or `footer.html` partials.
+
+## A note of thanks
+
+Huge thanks to [Paul Irish](https://github.com/paulirish) for the Lite YouTube
+Embed component and to the original Micro.blog plug-in author for laying the
+foundation that made this lightweight fork possible.
