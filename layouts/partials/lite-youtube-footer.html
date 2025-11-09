@@ -47,6 +47,103 @@
         return videoId;
     }
 
+    function parseStartTimeValue(rawValue, source) {
+        if (typeof rawValue !== 'string') {
+            console.warn(`Ignoring ${source}: expected a string value but received`, rawValue);
+            return null;
+        }
+
+        const trimmed = rawValue.trim();
+        if (!trimmed) {
+            console.warn(`Ignoring ${source}: value is empty`);
+            return null;
+        }
+
+        if (/^-?\d+$/.test(trimmed)) {
+            const seconds = Number.parseInt(trimmed, 10);
+            if (!Number.isFinite(seconds) || seconds < 0) {
+                console.warn(`Ignoring ${source}: value must be a non-negative integer (received "${rawValue}")`);
+                return null;
+            }
+            return seconds;
+        }
+
+        const normalized = trimmed.toLowerCase();
+        const match = normalized.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+        if (match && (match[1] || match[2] || match[3])) {
+            const hours = match[1] ? Number.parseInt(match[1], 10) : 0;
+            const minutes = match[2] ? Number.parseInt(match[2], 10) : 0;
+            const seconds = match[3] ? Number.parseInt(match[3], 10) : 0;
+
+            const total = hours * 3600 + minutes * 60 + seconds;
+            if (!Number.isFinite(total) || total < 0) {
+                console.warn(`Ignoring ${source}: calculated invalid duration from "${rawValue}"`);
+                return null;
+            }
+            return total;
+        }
+
+        console.warn(`Unrecognized time format for ${source}: "${rawValue}"`);
+        return null;
+    }
+
+    function extractStartTimeSeconds(url) {
+        const queryParams = [
+            { name: 'start', source: 'query parameter "start"' },
+            { name: 't', source: 'query parameter "t"' },
+            { name: 'time_continue', source: 'query parameter "time_continue"' },
+        ];
+
+        for (const { name, source } of queryParams) {
+            if (url.searchParams.has(name)) {
+                const value = url.searchParams.get(name);
+                const seconds = parseStartTimeValue(value, source);
+                if (seconds !== null) {
+                    return seconds;
+                }
+            }
+        }
+
+        const hash = url.hash ? url.hash.slice(1) : '';
+        if (hash) {
+            const normalizedHash = hash.replace(/^\?/, '');
+            let fragmentParams;
+
+            try {
+                fragmentParams = new URLSearchParams(normalizedHash);
+            } catch (err) {
+                console.warn(`Unable to parse fragment for ${url.href}:`, err);
+                fragmentParams = null;
+            }
+
+            if (fragmentParams) {
+                const fragmentSources = [
+                    { name: 'start', source: 'fragment parameter "start"' },
+                    { name: 't', source: 'fragment parameter "t"' },
+                    { name: 'time_continue', source: 'fragment parameter "time_continue"' },
+                ];
+
+                for (const { name, source } of fragmentSources) {
+                    if (fragmentParams.has(name)) {
+                        const value = fragmentParams.get(name);
+                        const seconds = parseStartTimeValue(value, source);
+                        if (seconds !== null) {
+                            return seconds;
+                        }
+                    }
+                }
+            } else if (normalizedHash.startsWith('t=')) {
+                const value = normalizedHash.slice(2);
+                const seconds = parseStartTimeValue(value, 'fragment parameter "t"');
+                if (seconds !== null) {
+                    return seconds;
+                }
+            }
+        }
+
+        return null;
+    }
+
     function processYouTubeLinks() {
         const postClass = '{{ or $post_class "post-content" }}';
         const processedVideos = new Set();
@@ -97,6 +194,17 @@
                 const video = document.createElement('lite-youtube');
                 video.setAttribute('videoid', ytId);
                 video.setAttribute('playlabel', link.innerText || 'Play Video');
+
+                const startSeconds = extractStartTimeSeconds(url);
+                if (startSeconds !== null) {
+                    const existingParams = video.getAttribute('params') || '';
+                    const params = new URLSearchParams(existingParams);
+                    params.set('start', String(startSeconds));
+                    const serialized = params.toString();
+                    if (serialized) {
+                        video.setAttribute('params', serialized);
+                    }
+                }
 
                 // Insert video right after the paragraph
                 paragraph.insertAdjacentElement('afterend', video);
