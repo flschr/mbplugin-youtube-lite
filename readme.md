@@ -1,4 +1,4 @@
-# Lite YouTube for Micro.blog
+# YouTube-Lite for Micro.blog
 
 Lite YouTube for Micro.blog replaces standard YouTube iframes with Paul Irish's
 [Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so
