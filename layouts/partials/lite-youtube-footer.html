@@ -11,6 +11,45 @@
 
 <script>
     // Wait for both DOM and lite-youtube script to be ready
+    const YT_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+    const YOUTUBE_HOST_PATTERN = /(^|\.)youtube\.com$|(^|\.)youtu\.be$/;
+
+    function extractYouTubeVideoId(url) {
+        const host = url.hostname.toLowerCase();
+
+        if (!YOUTUBE_HOST_PATTERN.test(host)) {
+            return null;
+        }
+
+        const segments = url.pathname.split('/').filter(Boolean);
+        const firstSegment = segments[0];
+        let videoId = null;
+
+        if (/youtube\.com$/.test(host)) {
+            if (firstSegment === 'shorts' && segments[1]) {
+                videoId = segments[1];
+            } else if (firstSegment === 'embed' && segments[1]) {
+                videoId = segments[1];
+            } else if ((firstSegment === 'watch' || !firstSegment) && url.searchParams.has('v')) {
+                videoId = url.searchParams.get('v');
+            }
+        } else {
+            videoId = firstSegment;
+        }
+
+        if (!videoId) {
+            console.warn(`Could not extract video ID from ${url.href}`);
+            return null;
+        }
+
+        if (!YT_ID_PATTERN.test(videoId)) {
+            console.warn(`Invalid video ID format for ${url.href}: ${videoId}`);
+            return null;
+        }
+
+        return videoId;
+    }
+
     function processYouTubeLinks() {
         console.log('processYouTubeLinks called');
         const postClass = '{{ or $post_class "post-content" }}';
@@ -29,21 +68,20 @@
             links.forEach(link => {
                 if (!link.href) return;
 
-                // Check if link is a YouTube URL
-                if (!(link.href.includes('youtube.com') || link.href.includes('youtu.be'))) return;
-
-                console.log(`Found YouTube link: ${link.href}`);
-
-                // Extract YouTube video ID
-                // https://gist.github.com/jphase/9086823
-                const matches = link.href.match(/(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/);
-
-                if (!matches || !matches[7]) {
-                    console.warn(`Could not extract video ID from ${link.href}`);
+                let url;
+                try {
+                    url = new URL(link.href);
+                } catch (err) {
+                    console.warn(`Skipping invalid URL ${link.href}:`, err);
                     return;
                 }
 
-                const ytId = matches[7];
+                const ytId = extractYouTubeVideoId(url);
+                if (!ytId) {
+                    return;
+                }
+
+                console.log(`Found YouTube link: ${link.href}`);
                 console.log(`Extracted video ID: ${ytId}`);
 
                 // Find the paragraph containing the link
