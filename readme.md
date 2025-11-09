@@ -3,6 +3,8 @@
 Lite YouTube for Micro.blog replaces standard YouTube iframes with Paul Irish's
 [Lite YouTube Embed](https://github.com/paulirish/lite-youtube-embed) component so
 your posts can load quickly while still letting visitors play videos on demand.
+It is proudly forked from [rknightuk/micro-blog-lite-youtube](https://github.com/rknightuk/micro-blog-lite-youtube);
+many thanks to the original author for the inspiration and groundwork.
 Whenever a post contains a YouTube link (or several links), the plug-in inserts
 a lightweight embed immediately after the paragraph that contains each link.
 
