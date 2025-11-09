@@ -9,13 +9,7 @@
 
 <script>
     // Wait for both DOM and lite-youtube script to be ready
-    function initLiteYouTube() {
-        // Check if customElements is available (lite-youtube needs it)
-        if (typeof customElements === 'undefined') {
-            console.warn('Custom elements not supported - lite-youtube will not work');
-            return;
-        }
-
+    function processYouTubeLinks() {
         const postClass = '{{ or $post_class "post-content" }}';
         const processedVideos = new Set();
 
@@ -57,6 +51,21 @@
                 // Insert video right after the paragraph
                 paragraph.insertAdjacentElement('afterend', video);
             });
+        });
+    }
+
+    function initLiteYouTube() {
+        // Check if customElements is available (lite-youtube needs it)
+        if (typeof customElements === 'undefined') {
+            console.warn('Custom elements not supported - lite-youtube will not work');
+            return;
+        }
+
+        // Wait for the lite-youtube custom element to be defined before creating elements
+        customElements.whenDefined('lite-youtube').then(() => {
+            processYouTubeLinks();
+        }).catch(err => {
+            console.error('Error loading lite-youtube:', err);
         });
     }
 
