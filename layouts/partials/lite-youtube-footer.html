@@ -33,6 +33,7 @@
                 if (!(link.href.includes('youtube.com') || link.href.includes('youtu.be'))) return;
 
                 console.log(`Found YouTube link: ${link.href}`);
+                link.classList.add('lite-youtube-link--processed');
 
                 // Extract YouTube video ID
                 // https://gist.github.com/jphase/9086823
