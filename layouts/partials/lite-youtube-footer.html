@@ -1,15 +1,9 @@
 {{ $post_class := $.Site.Params.post_class }}
 
 <script
-    src="{{ "js/lite-yt-embed.js" | relURL }}"
+    src="{{ "js/lite-youtube.js" | relURL }}"
     defer
-    onerror="console.error('Failed to load lite-youtube web component:', this.src)">
-</script>
-
-<script
-    src="{{ "js/lite-youtube-processor.js" | relURL }}"
-    defer
-    onerror="console.error('Failed to load lite-youtube processor:', this.src)">
+    onerror="console.error('Failed to load lite-youtube plugin:', this.src)">
 </script>
 
 <script>
@@ -19,9 +13,8 @@
         const postClass = '{{ or $post_class "post-content" }}';
 
         function initializePlugin() {
-            // Check if the processor loaded successfully
             if (typeof window.initLiteYouTube !== 'function') {
-                console.error('lite-youtube-processor.js failed to load or initialize');
+                console.error('lite-youtube.js failed to load or initialize');
                 return;
             }
 
