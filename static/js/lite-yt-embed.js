@@ -95,7 +95,7 @@
                 button.className = 'lty-playbtn';
 
                 const hiddenLabel = document.createElement('span');
-                hiddenLabel.className = 'lyt-visually-hidden';
+                hiddenLabel.className = 'lty-visually-hidden';
                 hiddenLabel.textContent = this.playLabel;
                 button.appendChild(hiddenLabel);
 
@@ -124,7 +124,7 @@
                 return;
             }
             button.setAttribute('aria-label', this.playLabel);
-            const hidden = button.querySelector('.lyt-visually-hidden');
+            const hidden = button.querySelector('.lty-visually-hidden');
             if (hidden) {
                 hidden.textContent = this.playLabel;
             }
@@ -140,11 +140,11 @@
 
         _onClick(event) {
             event.preventDefault();
-            if (this.classList.contains('lyt-activated')) {
+            if (this.classList.contains('lty-activated')) {
                 return;
             }
 
-            this.classList.add('lyt-activated');
+            this.classList.add('lty-activated');
             const playButton = this.querySelector('.lty-playbtn');
             if (playButton) {
                 playButton.remove();
